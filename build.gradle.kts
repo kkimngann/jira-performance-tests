@@ -74,7 +74,6 @@ dependencies {
         "com.atlassian.performance.tools:aws-infrastructure:[2.8.0,3.0.0)",
         "com.atlassian.performance.tools:aws-resources:[1.9.0,2.0.0)",
         "com.atlassian.performance.tools:virtual-users:[3.11.0,3.12.0)",
-        "com.atlassian.performance.tools:jira-actions:[3.0.0,4.0.0)",
         "com.atlassian.performance.tools:infrastructure:[4.22.0,5.0.0)"
     ).forEach { api(it) }
 
@@ -85,6 +84,7 @@ dependencies {
     ).plus(
         log4jCore()
     ).forEach { implementation(it) }
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     listOf(
         "junit:junit:4.12",
