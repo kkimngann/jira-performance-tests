@@ -24,14 +24,7 @@ public class MyJiraOnPremiseIT {
         final String adminPassword = System.getProperty("adminPassword");
         final int numberUsers = Integer.parseInt(System.getProperty("numberUsers"));
         final int durationMinute = Integer.parseInt(System.getProperty("durationMinute"));
-
-        System.out.println(testURI);
-        System.out.println(adminUsername);
-        System.out.println(adminPassword);
-        System.out.println(numberUsers);
-        System.out.println(durationMinute);
-
-
+        
         /*
          * Point this toward tested Jira.
          */
