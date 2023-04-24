@@ -9,8 +9,8 @@ pipeline {
                     jenkin-job: selenium
             spec:
                 containers:
-                - name: chromedriver
-                  image: markhobson/maven-chrome:jdk-11
+                - name: maven
+                  image: maven:3.8.6-openjdk-11-slim
                   command:
                   - cat
                   tty: true
@@ -29,13 +29,12 @@ pipeline {
         //         }
         //     }
         // }
+        
         stage('performance test'){
             steps {
                 script {
-                    dir('examples/btf-test') {
-                        container('chromedriver') {
-                            sh './mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5'
-                        }
+                    container('maven') {
+                        sh 'cd examples/btf-test && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5'
                     }
                 }
             }
@@ -95,4 +94,3 @@ pipeline {
     //     }
     // }
 }
-
