@@ -10,7 +10,7 @@ pipeline {
             spec:
                 containers:
                 - name: chromedriver
-                  image: selenium/standalone-chrome:111.0.5563.146-chromedriver-111.0.5563.64
+                  image: markhobson/maven-chrome:jdk-11
                   command:
                   - cat
                   tty: true
