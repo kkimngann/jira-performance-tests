@@ -59,6 +59,7 @@ pipeline {
                 }
             }
         }
+    }
 
     post {
         always {
@@ -93,10 +94,8 @@ pipeline {
                         ]
                     ]
                 ]
-
-                if failedTest.txt != null {
-                    slackSend channel: 'selenium-notifications', blocks: blocks, teamDomain: 'agileops', tokenCredentialId: 'jenkins-slack', botUser: true
-                }
+                
+                slackSend channel: 'selenium-notifications', blocks: blocks, teamDomain: 'agileops', tokenCredentialId: 'jenkins-slack', botUser: true
             }
         }
     }
