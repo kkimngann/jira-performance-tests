@@ -33,32 +33,28 @@ pipeline {
     }
 
     stages {
-        stage('restore cache') {
-            steps {
-                script {
-                    container('minio-cli') {
-                        sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
-                        sh "mc mirror minio/selenium/jira-performance-test/.m2 /data &> /dev/null"
-                    }
-                }
-            }
-        }
+        // stage('restore cache') {
+        //     steps {
+        //         script {
+        //             container('minio-cli') {
+        //                 sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
+        //                 sh "mc mirror minio/selenium/jira-performance-test/.m2 /data &> /dev/null"
+        //             }
+        //         }
+        //     }
+        // }
         
         stage('performance test'){
             steps {
                 script {
                     dir('examples/btf-test') {
                         container('maven') {
-                            sh '''
-                            mkdir -p .m2 && cp -rT /data ~/.m2 &> /dev/null
-                            unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5 || true
-                            cp -rT ~/.m2 /data &> /dev/null
-                            '''
-                        }
+                            sh 'unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5 || true'
+                            }
 
-                        container('minio-cli') {
-                        sh "mc mirror /data minio/selenium/jira-performance-test --overwrite &> /dev/null"
-                        }
+                        // container('minio-cli') {
+                        // sh "mc mirror /data minio/selenium/jira-performance-test --overwrite &> /dev/null"
+                        // }
                     }
                 }
             }
