@@ -51,10 +51,6 @@ pipeline {
                         container('maven') {
                             sh 'unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5 || true'
                         }
-
-                        // container('minio-cli') {
-                        // sh "mc mirror /data minio/selenium/jira-performance-test --overwrite &> /dev/null"
-                        // }
                     }
                 }
             }
@@ -63,7 +59,7 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/*'
+            archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/**/*'
 
             publishHTML (target : [allowMissing: false,
             alwaysLinkToLastBuild: true,
