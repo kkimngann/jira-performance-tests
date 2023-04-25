@@ -14,27 +14,52 @@ pipeline {
                   command:
                   - cat
                   tty: true
+                  volumeMounts:
+                  - name: shared-data
+                    mountPath: /data
+                - name: minio-cli
+                  image: minio/mc
+                  command:
+                  - cat
+                  tty: true
+                  volumeMounts:
+                  - name: shared-data
+                    mountPath: /data
+                volumes:
+                - name: shared-data
+                  emptyDir: {}
             '''
         }
     }
 
     stages {
-        // stage('restore cache') {
-        //     steps {
-        //         script {
-        //             container('minio-cli') {
-        //                 sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
-        //                 sh "mc mirror minio/selenium/.m2 /data"
-        //             }
-        //         }
-        //     }
-        // }
+        stage('restore cache') {
+            steps {
+                script {
+                    container('minio-cli') {
+                        sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
+                        sh "mc mirror minio/selenium/jira-performance-test/.m2 /data &> /dev/null"
+                    }
+                }
+            }
+        }
         
         stage('performance test'){
             steps {
                 script {
-                    container('maven') {
-                        sh 'cd examples/btf-test && unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5'
+                    dir('examples/btf-test') {
+                        container('maven') {
+                            sh '''
+                            mkdir -p .m2 && cp -rT /data ~/.m2 &> /dev/null
+                            export MAVEN_CONFIG=~/.m2
+                            ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5
+                            cp -rT ~/.m2 /data &> /dev/null
+                            '''
+                        }
+
+                        container('minio-cli') {
+                        sh "mc mirror /data minio/selenium/.m2 --overwrite &> /dev/null"
+                        }
                     }
                 }
             }
