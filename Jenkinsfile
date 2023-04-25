@@ -74,7 +74,7 @@ pipeline {
             useWrapperFileDirectly: true])
             
             script {
-                def "blocks": [
+                def blocks = [
                     [
                         "type": "section",
                         "text": [
