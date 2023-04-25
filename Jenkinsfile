@@ -10,7 +10,7 @@ pipeline {
             spec:
                 containers:
                 - name: maven
-                  image: maven:3.8.6-openjdk-11-slim
+                  image: markhobson/maven-chrome:jdk-11
                   command:
                   - cat
                   tty: true
@@ -34,7 +34,6 @@ pipeline {
             steps {
                 script {
                     container('maven') {
-                        sh 'apt update && apt-get install apt-file -y'
                         sh 'cd examples/btf-test && unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5'
                     }
                 }
