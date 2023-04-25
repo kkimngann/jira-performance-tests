@@ -51,7 +51,7 @@ pipeline {
                         container('maven') {
                             sh '''
                             mkdir -p .m2 && cp -rT /data ~/.m2 &> /dev/null || true
-                            unset $MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5
+                            unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5
                             cp -rT ~/.m2 /data &> /dev/null
                             '''
                         }
