@@ -38,7 +38,7 @@ pipeline {
                 script {
                     container('minio-cli') {
                         sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
-                        sh "mc mirror minio/selenium/jira-performance-test/.m2 /data &> /dev/null || true"
+                        sh "mc mirror minio/selenium/jira-performance-test/.m2 /data &> /dev/null"
                     }
                 }
             }
@@ -50,14 +50,14 @@ pipeline {
                     dir('examples/btf-test') {
                         container('maven') {
                             sh '''
-                            mkdir -p .m2 && cp -rT /data ~/.m2 &> /dev/null || true
-                            unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5
+                            mkdir -p .m2 && cp -rT /data ~/.m2 &> /dev/null
+                            unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5 || true
                             cp -rT ~/.m2 /data &> /dev/null
                             '''
                         }
 
                         container('minio-cli') {
-                        sh "mc mirror /data minio/selenium/.m2 --overwrite &> /dev/null"
+                        sh "mc mirror /data minio/selenium/jira-performance-test --overwrite &> /dev/null"
                         }
                     }
                 }
@@ -103,18 +103,18 @@ pipeline {
 
     }
 
-    // post {
-    //     always {
-    //         archiveArtifacts artifacts: 'allure-results/**/*'
+    post {
+        always {
+            archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/*'
 
-    //         publishHTML (target : [allowMissing: false,
-    //         alwaysLinkToLastBuild: true,
-    //         keepAll: true,
-    //         reportDir: 'allure-report',
-    //         reportFiles: 'index.html',
-    //         reportName: 'allure-report',
-    //         reportTitles: '', 
-    //         useWrapperFileDirectly: true])
-    //     }
-    // }
+            publishHTML (target : [allowMissing: false,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: 'examples/btf-test/target/jpt-workspace/',
+            reportFiles: 'mean-latency-chart.html',
+            reportName: 'mean-latency-chart',
+            reportTitles: '', 
+            useWrapperFileDirectly: true])
+        }
+    }
 }
