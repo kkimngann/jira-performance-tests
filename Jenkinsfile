@@ -34,6 +34,7 @@ pipeline {
             steps {
                 script {
                     container('maven') {
+                        sh 'apt update && apt install libglib2.0-0 -y'
                         sh 'cd examples/btf-test && unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5'
                     }
                 }
