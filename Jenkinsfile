@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     container('maven') {
-                        sh 'cd examples/btf-test && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5'
+                        sh 'cd examples/btf-test && unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5'
                     }
                 }
             }
