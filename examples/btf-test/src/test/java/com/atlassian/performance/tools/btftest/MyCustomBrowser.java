@@ -1,11 +1,11 @@
 package com.atlassian.performance.tools.btftest;
 
-import com.atlassian.performance.tools.virtualusers.api.browsers.GoogleChrome;
+import com.atlassian.performance.tools.virtualusers.api.browsers.HeadlessChromeBrowser;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-public class MyCustomBrowser extends GoogleChrome {
+public class MyCustomBrowser extends HeadlessChromeBrowser {
     @Override
     protected void configure(
         @NotNull ChromeOptions options,
