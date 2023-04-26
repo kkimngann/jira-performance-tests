@@ -97,8 +97,8 @@ pipeline {
             publishHTML (target : [allowMissing: false,
             alwaysLinkToLastBuild: true,
             keepAll: true,
-            reportDir: 'examples/btf-test/target/jpt-workspace/**',
-            reportFiles: '*.html*',
+            reportDir: 'examples/btf-test/target/jpt-workspace',
+            reportFiles: '**/*.html*',
             reportName: '',
             reportTitles: '', 
             useWrapperFileDirectly: true])
