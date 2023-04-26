@@ -32,6 +32,13 @@ pipeline {
         }
     }
 
+    environment {
+        TEST_URI = "https://jira-9.aandd.io/"
+        ADMIN_USERNAME = "admin"
+        ADMIN_PASSWORD = "12345678"
+        DURATION_TIME = "5"
+    }
+
     stages {
         // stage('restore cache') {
         //     steps {
@@ -43,53 +50,80 @@ pipeline {
         //         }
         //     }
         // }
-        
-        stage('performance test'){
+
+        stage('Setup parameters') {
             steps {
-                script {
-                    dir('examples/btf-test') {
-                        container('maven') {
-                            sh 'unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5 || true'
-                        }
-                    }
+                script { 
+                    properties([
+                        parameters([
+                            text(
+                                defaultValue: '1', 
+                                name: 'NUMBER_USERS'
+                            ),
+                            string(
+                                defaultValue: '5', 
+                                name: 'DURATION_TIME', 
+                                trim: true
+                            )
+                        ])
+                    ])
+
+                    echo "NUMBER USER IS $NUMBER_USERS"
+                    echo "DURATION TIME IS $DURATION_TIME"
                 }
             }
         }
-    }
 
-    // post {
-    //     always {
-    //         archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/**/*'
+        // stage('performance test'){
+        //     steps {
+        //         script {
+        //             dir('examples/btf-test') {
+        //                 container('maven') {
+        //                     sh 'unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${TEST_URI} -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5 || true'
+        //                 }
 
-    //         publishHTML (target : [allowMissing: false,
-    //         alwaysLinkToLastBuild: true,
-    //         keepAll: true,
-    //         reportDir: 'examples/btf-test/target/jpt-workspace/',
-    //         reportFiles: 'mean-latency-chart.html',
-    //         reportName: 'mean-latency-chart',
-    //         reportTitles: '', 
-    //         useWrapperFileDirectly: true])
+                        // container('minio-cli') {
+                        // sh "mc mirror /data minio/selenium/jira-performance-test --overwrite &> /dev/null"
+                        // }
+                    // }
+    //             }
+    //         }
+    //     }
+    // }
+
+    // // post {
+    // //     always {
+    // //         archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/**/*'
+
+    // //         publishHTML (target : [allowMissing: false,
+    // //         alwaysLinkToLastBuild: true,
+    // //         keepAll: true,
+    // //         reportDir: 'examples/btf-test/target/jpt-workspace/',
+    // //         reportFiles: 'mean-latency-chart.html',
+    // //         reportName: 'mean-latency-chart',
+    // //         reportTitles: '', 
+    // //         useWrapperFileDirectly: true])
             
-    //         script {
-    //             def blocks = [
-    //                 [
-    //                     "type": "section",
-    //                     "text": [
-    //                         "type": "mrkdwn",
-    //                         "text": "*TEST FINISHED*"
-    //                     ]
-    //                 ],
-    //                 [
-    //                     "type": "divider"
-    //                 ],
-    //                 [
-    //                     "type": "section",
-    //                     "text": [
-    //                         "type": "mrkdwn",
-    //                         "text": "Job *${env.JOB_NAME}* has been finished.\n\nMore info at:\n*Build URL:* ${env.BUILD_URL}console\n*Mean latency report:* ${env.BUILD_URL}mean-latency-chart"
-    //                     ]
-    //                 ]
-    //             ]
+    // //         script {
+    // //             def blocks = [
+    // //                 [
+    // //                     "type": "section",
+    // //                     "text": [
+    // //                         "type": "mrkdwn",
+    // //                         "text": "*TEST FINISHED*"
+    // //                     ]
+    // //                 ],
+    // //                 [
+    // //                     "type": "divider"
+    // //                 ],
+    // //                 [
+    // //                     "type": "section",
+    // //                     "text": [
+    // //                         "type": "mrkdwn",
+    // //                         "text": "Job *${env.JOB_NAME}* has been finished.\n\nMore info at:\n*Build URL:* ${env.BUILD_URL}console\n*Mean latency report:* ${env.BUILD_URL}mean-latency-chart"
+    // //                     ]
+    // //                 ]
+    // //             ]
                 
     //             slackSend channel: 'selenium-notifications', blocks: blocks, teamDomain: 'agileops', tokenCredentialId: 'jenkins-slack', botUser: true
     //         }
