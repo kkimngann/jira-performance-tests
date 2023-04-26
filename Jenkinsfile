@@ -32,11 +32,11 @@ pipeline {
         }
     }
 
-    environment {
-        TEST_URI = "https://jira-9.aandd.io/"
-        ADMIN_USERNAME = "admin"
-        ADMIN_PASSWORD = "12345678"
-    }
+    // environment {
+    //     TEST_URI = "https://jira-9.aandd.io/"
+    //     ADMIN_USERNAME = "admin"
+    //     ADMIN_PASSWORD = "12345678"
+    // }
 
     stages {
         // stage('restore cache') {
@@ -55,6 +55,18 @@ pipeline {
                 script { 
                     properties([
                         parameters([
+                            text(
+                                defaultValue: 'https://jira-9.aandd.io/', 
+                                name: 'TEST_URI'
+                            ),
+                            text(
+                                defaultValue: 'admin', 
+                                name: 'ADMIN_USERNAME'
+                            ),
+                            text(
+                                defaultValue: '12345678', 
+                                name: 'ADMIN_PASSWORD'
+                            ),
                             text(
                                 defaultValue: '1', 
                                 name: 'NUMBER_USERS'
@@ -88,7 +100,7 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/**/*'
+            archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/*'
 
             publishHTML (target : [allowMissing: false,
             alwaysLinkToLastBuild: true,
