@@ -68,8 +68,8 @@ pipeline {
                         ])
                     ])
 
-                    echo "NUMBER USER IS $NUMBER_USERS"
-                    echo "DURATION TIME IS $DURATION_TIME"
+                    echo "NUMBER USER IS ${params.NUMBER_USERS}"
+                    echo "DURATION TIME IS ${params.DURATION_TIME}"
                 }
             }
         }
