@@ -14,15 +14,23 @@ pipeline {
                   command:
                   - cat
                   tty: true
+                  volumeMounts:
+                  - name: shared-data
+                    mountPath: /data
+                - name: minio
+                  image: minio/mc
+                  command:
+                  - cat
+                  tty: true
+                  volumeMounts:
+                  - name: shared-data
+                    mountPath: /data
+                volumes:
+                - name: shared-data
+                  emptyDir: {}
             '''
         }
     }
-
-    // environment {
-    //     TEST_URI = "https://jira-9.aandd.io/"
-    //     ADMIN_USERNAME = "admin"
-    //     ADMIN_PASSWORD = "12345678"
-    // }
 
     stages {
         stage('setup parameters') {
@@ -62,7 +70,6 @@ pipeline {
                     dir('examples/btf-test') {
                         container('maven') {
                             sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIME} || true"
-                            // sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5"
                         }
                     }
                 }
@@ -72,7 +79,7 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/*'
+            archiveArtifacts artifacts: 'examples/btf-test/**/*'
 
             publishHTML (target : [allowMissing: false,
             alwaysLinkToLastBuild: true,
