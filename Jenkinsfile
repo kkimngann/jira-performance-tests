@@ -33,15 +33,16 @@ pipeline {
     }
 
     stages {
-        stage('restore cache') {
-            steps {
-                script {
-                    // container('minio') {
-                    //     sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
-                    //     sh "mc mirror minio/jira-performance-test/ /data &> /dev/null"
-                    // }
-                }
-            }
+        // stage('restore cache') {
+        //     steps {
+        //         script {
+        //             container('minio') {
+        //                 sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
+        //                 sh "mc mirror minio/jira-performance-test/ /data &> /dev/null"
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('setup parameters') {
             steps {
