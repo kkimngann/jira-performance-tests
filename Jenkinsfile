@@ -14,20 +14,6 @@ pipeline {
                   command:
                   - cat
                   tty: true
-                  volumeMounts:
-                  - name: shared-data
-                    mountPath: /data
-                - name: minio-cli
-                  image: minio/mc
-                  command:
-                  - cat
-                  tty: true
-                  volumeMounts:
-                  - name: shared-data
-                    mountPath: /data
-                volumes:
-                - name: shared-data
-                  emptyDir: {}
             '''
         }
     }
@@ -39,24 +25,13 @@ pipeline {
     // }
 
     stages {
-        // stage('restore cache') {
-        //     steps {
-        //         script {
-        //             container('minio-cli') {
-        //                 sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
-        //                 sh "mc mirror minio/selenium/jira-performance-test/.m2 /data &> /dev/null"
-        //             }
-        //         }
-        //     }
-        // }
-
         stage('setup parameters') {
             steps {
                 script { 
                     properties([
                         parameters([
                             text(
-                                defaultValue: 'https://jira-9.aandd.io/', 
+                                defaultValue: 'https://jira-9.aandd.io',
                                 name: 'TEST_URI'
                             ),
                             text(
@@ -86,11 +61,8 @@ pipeline {
                 script {
                     dir('examples/btf-test') {
                         container('maven') {
-                            sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIMES} || true"
-                        }
-
-                        container('minio-cli') {
-                        sh "mc mirror /data minio/selenium/jira-performance-test --overwrite &> /dev/null"
+                            // sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIMES} || true"
+                            sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=https://jira-9.aandd.io/ -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5"
                         }
                     }
                 }
