@@ -57,42 +57,42 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/**/*'
+    // post {
+    //     always {
+    //         archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/**/*'
 
-            publishHTML (target : [allowMissing: false,
-            alwaysLinkToLastBuild: true,
-            keepAll: true,
-            reportDir: 'examples/btf-test/target/jpt-workspace/',
-            reportFiles: 'mean-latency-chart.html',
-            reportName: 'mean-latency-chart',
-            reportTitles: '', 
-            useWrapperFileDirectly: true])
+    //         publishHTML (target : [allowMissing: false,
+    //         alwaysLinkToLastBuild: true,
+    //         keepAll: true,
+    //         reportDir: 'examples/btf-test/target/jpt-workspace/',
+    //         reportFiles: 'mean-latency-chart.html',
+    //         reportName: 'mean-latency-chart',
+    //         reportTitles: '', 
+    //         useWrapperFileDirectly: true])
             
-            script {
-                def blocks = [
-                    [
-                        "type": "section",
-                        "text": [
-                            "type": "mrkdwn",
-                            "text": "*TEST FINISHED*"
-                        ]
-                    ],
-                    [
-                        "type": "divider"
-                    ],
-                    [
-                        "type": "section",
-                        "text": [
-                            "type": "mrkdwn",
-                            "text": "Job *${env.JOB_NAME}* has been finished.\n\nMore info at:\n*Build URL:* ${env.BUILD_URL}console\n*Mean latency report:* ${env.BUILD_URL}mean-latency-chart"
-                        ]
-                    ]
-                ]
+    //         script {
+    //             def blocks = [
+    //                 [
+    //                     "type": "section",
+    //                     "text": [
+    //                         "type": "mrkdwn",
+    //                         "text": "*TEST FINISHED*"
+    //                     ]
+    //                 ],
+    //                 [
+    //                     "type": "divider"
+    //                 ],
+    //                 [
+    //                     "type": "section",
+    //                     "text": [
+    //                         "type": "mrkdwn",
+    //                         "text": "Job *${env.JOB_NAME}* has been finished.\n\nMore info at:\n*Build URL:* ${env.BUILD_URL}console\n*Mean latency report:* ${env.BUILD_URL}mean-latency-chart"
+    //                     ]
+    //                 ]
+    //             ]
                 
-                slackSend channel: 'selenium-notifications', blocks: blocks, teamDomain: 'agileops', tokenCredentialId: 'jenkins-slack', botUser: true
-            }
-        }
-    }
+    //             slackSend channel: 'selenium-notifications', blocks: blocks, teamDomain: 'agileops', tokenCredentialId: 'jenkins-slack', botUser: true
+    //         }
+    //     }
+    // }
 }
