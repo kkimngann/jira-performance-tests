@@ -36,7 +36,6 @@ pipeline {
         TEST_URI = "https://jira-9.aandd.io/"
         ADMIN_USERNAME = "admin"
         ADMIN_PASSWORD = "12345678"
-        DURATION_TIME = "5"
     }
 
     stages {
@@ -51,7 +50,7 @@ pipeline {
         //     }
         // }
 
-        stage('Setup parameters') {
+        stage('setup parameters') {
             steps {
                 script { 
                     properties([
@@ -60,73 +59,69 @@ pipeline {
                                 defaultValue: '1', 
                                 name: 'NUMBER_USERS'
                             ),
-                            string(
+                            text(
                                 defaultValue: '5', 
                                 name: 'DURATION_TIME', 
-                                trim: true
                             )
                         ])
                     ])
-
-                    echo "NUMBER USER IS ${params.NUMBER_USERS}"
-                    echo "DURATION TIME IS ${params.DURATION_TIME}"
                 }
             }
         }
 
-        // stage('performance test'){
-        //     steps {
-        //         script {
-        //             dir('examples/btf-test') {
-        //                 container('maven') {
-        //                     sh 'unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${TEST_URI} -DadminUsername=admin -DadminPassword=12345678 -DnumberUsers=1 -DdurationMinute=5 || true'
-        //                 }
+        stage('performance test'){
+            steps {
+                script {
+                    dir('examples/btf-test') {
+                        container('maven') {
+                            sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIMES} || true"
+                        }
 
-                        // container('minio-cli') {
-                        // sh "mc mirror /data minio/selenium/jira-performance-test --overwrite &> /dev/null"
-                        // }
-                    // }
-    //             }
-    //         }
-    //     }
+                        container('minio-cli') {
+                        sh "mc mirror /data minio/selenium/jira-performance-test --overwrite &> /dev/null"
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    // // post {
-    // //     always {
-    // //         archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/**/*'
+    post {
+        always {
+            archiveArtifacts artifacts: 'examples/btf-test/target/jpt-workspace/**/*'
 
-    // //         publishHTML (target : [allowMissing: false,
-    // //         alwaysLinkToLastBuild: true,
-    // //         keepAll: true,
-    // //         reportDir: 'examples/btf-test/target/jpt-workspace/',
-    // //         reportFiles: 'mean-latency-chart.html',
-    // //         reportName: 'mean-latency-chart',
-    // //         reportTitles: '', 
-    // //         useWrapperFileDirectly: true])
+            publishHTML (target : [allowMissing: false,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: 'examples/btf-test/target/jpt-workspace/',
+            reportFiles: 'mean-latency-chart.html',
+            reportName: 'mean-latency-chart',
+            reportTitles: '', 
+            useWrapperFileDirectly: true])
             
-    // //         script {
-    // //             def blocks = [
-    // //                 [
-    // //                     "type": "section",
-    // //                     "text": [
-    // //                         "type": "mrkdwn",
-    // //                         "text": "*TEST FINISHED*"
-    // //                     ]
-    // //                 ],
-    // //                 [
-    // //                     "type": "divider"
-    // //                 ],
-    // //                 [
-    // //                     "type": "section",
-    // //                     "text": [
-    // //                         "type": "mrkdwn",
-    // //                         "text": "Job *${env.JOB_NAME}* has been finished.\n\nMore info at:\n*Build URL:* ${env.BUILD_URL}console\n*Mean latency report:* ${env.BUILD_URL}mean-latency-chart"
-    // //                     ]
-    // //                 ]
-    // //             ]
+            script {
+                def blocks = [
+                    [
+                        "type": "section",
+                        "text": [
+                            "type": "mrkdwn",
+                            "text": "*TEST FINISHED*"
+                        ]
+                    ],
+                    [
+                        "type": "divider"
+                    ],
+                    [
+                        "type": "section",
+                        "text": [
+                            "type": "mrkdwn",
+                            "text": "Job *${env.JOB_NAME}* has been finished.\n\nMore info at:\n*Build URL:* ${env.BUILD_URL}console\n*Mean latency report:* ${env.BUILD_URL}mean-latency-chart"
+                        ]
+                    ]
+                ]
                 
-    //             slackSend channel: 'selenium-notifications', blocks: blocks, teamDomain: 'agileops', tokenCredentialId: 'jenkins-slack', botUser: true
-    //         }
-    //     }
-    // }
+                slackSend channel: 'selenium-notifications', blocks: blocks, teamDomain: 'agileops', tokenCredentialId: 'jenkins-slack', botUser: true
+            }
+        }
+    }
 }
