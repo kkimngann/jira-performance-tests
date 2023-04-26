@@ -71,6 +71,8 @@ pipeline {
                         container('maven') {
                             sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIME} || true"
                         }
+
+                        sh 'cat virtual-users.log | sed -n \'/actionName/,/View Issue/p\' > virtual-users.csv'
                     }
                 }
             }
@@ -79,14 +81,14 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'examples/btf-test/**/*'
+            archiveArtifacts artifacts: 'examples/btf-test/**/*', onlyIfSuccessful: true
 
             publishHTML (target : [allowMissing: false,
             alwaysLinkToLastBuild: true,
             keepAll: true,
-            reportDir: 'examples/btf-test/target/jpt-workspace/',
-            reportFiles: 'mean-latency-chart.html',
-            reportName: 'mean-latency-chart',
+            reportDir: 'examples/btf-test/target/jpt-workspace/**',
+            reportFiles: '*.html*',
+            reportName: '',
             reportTitles: '', 
             useWrapperFileDirectly: true])
             
