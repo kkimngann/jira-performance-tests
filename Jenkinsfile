@@ -33,16 +33,16 @@ pipeline {
     }
 
     stages {
-        // stage('restore cache') {
-        //     steps {
-        //         script {
-        //             container('minio') {
-        //                 sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
-        //                 sh "mc mirror minio/jira-performance-test/ /data &> /dev/null"
-        //             }
-        //         }
-        //     }
-        // }
+        stage('restore cache') {
+            steps {
+                script {
+                    container('minio') {
+                        sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
+                        sh "mc mirror minio/jira-performance-test/ /data &> /dev/null || true"
+                    }
+                }
+            }
+        }
 
         stage('setup parameters') {
             steps {
@@ -75,15 +75,20 @@ pipeline {
             }
         }
 
-        stage('performance test'){
+        stage('test jira performance'){
             steps {
                 script {
+                    sh 'mkdir -p .m2 && cp -rT /data ~/.m2 &> /dev/null || true'
                     dir('examples/btf-test') {
                         container('maven') {
                             sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIME} || true"
                         }
 
                         sh 'cat virtual-users.log | sed -n \'/actionName/,/View Issue/p\' > virtual-users.csv'
+                    }
+                    sh 'cp -rT ~/.m2 /data &> /dev/null'
+                    container('minio-cli') {
+                        sh "mc mirror /data minio/jira-performance-test/.m2 --overwrite &> /dev/null"
                     }
                 }
             }
@@ -99,7 +104,7 @@ pipeline {
             keepAll: true,
             reportDir: 'examples/btf-test/target/jpt-workspace',
             reportFiles: '**/*.html*',
-            reportName: '',
+            reportName: 'jira performance reports',
             reportTitles: '', 
             useWrapperFileDirectly: true])
             
@@ -119,7 +124,7 @@ pipeline {
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": "Job *${env.JOB_NAME}* has been finished.\n\nMore info at:\n*Build URL:* ${env.BUILD_URL}console\n*Mean latency report:* ${env.BUILD_URL}mean-latency-chart"
+                            "text": "Job *${env.JOB_NAME}* has been finished.\n\nMore info at:\n*Build URL:* ${env.BUILD_URL}console\n*Jira performance reports:* ${env.BUILD_URL}jira-performance-reports"
                         ]
                     ]
                 ]
