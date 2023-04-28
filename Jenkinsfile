@@ -137,10 +137,7 @@ pipeline {
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": "${virtualUsers}"
-                            "style": [
-                                "code": true
-                            ]
+                            "text": "```${virtualUsers}```"
                         ]
                     ],
                     [
