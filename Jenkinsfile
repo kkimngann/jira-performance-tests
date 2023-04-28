@@ -36,16 +36,16 @@ pipeline {
     }
 
     stages {
-        stage('restore cache') {
-            steps {
-                script {
-                    container('minio') {
-                        sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
-                        sh "mc mirror minio/jira-performance-test/ /data &> /dev/null || true"
-                    }
-                }
-            }
-        }
+        // stage('restore cache') {
+        //     steps {
+        //         script {
+        //             container('minio') {
+        //                 sh "mc alias set minio http://minio.minio.svc.cluster.local:9000 vJlIj3mKR4Df9ZHt 9qZLIDh5A14IciJfEcmwGAk9iVQxHt4L"
+        //                 sh "mc mirror minio/jira-performance-test/ /data &> /dev/null || true"
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('setup parameters') {
             steps {
@@ -81,20 +81,20 @@ pipeline {
         stage('test jira performance'){
             steps {
                 script {
-                    sh 'mkdir -p .m2 && cp -rT /data ~/.m2 &> /dev/null || true'
+                    // sh 'mkdir -p .m2 && cp -rT /data ~/.m2 &> /dev/null || true'
                     dir('examples/btf-test') {
                         container('maven') {
-                            sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIME} || true"
+                            sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIME} > result.log || true"
                         }
                         sh 'cat virtual-users.log | sed -n \'/actionName/,/View Issue/p\' > virtual-users.csv'
-                        virtualUsers = readFile('virtual-users.csv')
+                        virtualUsers = sh returnStdout: true, script: 'cat result.log | sed -n \'/Failed tests/,/Tests run/p\''
                         nodesCount = readFile('nodes.csv')
                     }
 
-                    sh 'cp -rT ~/.m2 /data &> /dev/null'
-                    container('minio-cli') {
-                        sh "mc mirror /data minio/jira-performance-test/.m2 --overwrite &> /dev/null"
-                    }
+                    // sh 'cp -rT ~/.m2 /data &> /dev/null'
+                    // container('minio-cli') {
+                    //     sh "mc mirror /data minio/jira-performance-test/.m2 --overwrite &> /dev/null"
+                    // }
                 }
             }
         }
@@ -108,7 +108,7 @@ pipeline {
             alwaysLinkToLastBuild: true,
             keepAll: true,
             reportDir: 'examples/btf-test/target/jpt-workspace',
-            reportFiles: '**/summary-per-cohort.html, **/mean-latency-chart.html, **/distribution-comparison.html, **/time-series-chart.html',
+            reportFiles: '**/summary-per-cohort.html, mean-latency-chart.html, **/distribution-comparison.html, **/time-series-chart.html',
             reportName: 'jira performance reports',
             reportTitles: '', 
             useWrapperFileDirectly: true])
@@ -116,10 +116,21 @@ pipeline {
             script {
                 def blocks = [
                     [
+                        "type": "header",
+                        "text": [
+                            "type": "plain_text",
+                            "text": ":smile: FINISHED TEST :smile:",
+                            "emoji": true
+                    ]
+                    ],
+                    [
+                        "type": "divider"
+                    ],
+                    [
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": "*FINISHED TEST*"
+                            "text": ":tada:Job *${env.JOB_NAME}* has been finished.\n\nTest parameters:\n${virtualUsers}"
                         ]
                     ],
                     [
@@ -129,7 +140,7 @@ pipeline {
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": "Job *${env.JOB_NAME}.toString().toUpperCase()* has been finished.\n\nTest parameters:\n${virtualUsers}\n*More info at:*\nNode's counts: ${nodesCount}\nJira URL: ${params.TEST_URI}\nBuild URL: ${env.BUILD_URL}\nFull reports: ${env.BUILD_URL}jira-performance-reports"
+                            "text": "*:pushpin:More info at:*\n• *Node's counts:* ${nodesCount}\n• *Jira URL:* ${params.TEST_URI}\n• *Build URL:* ${env.BUILD_URL}\n• *Full reports:* ${env.BUILD_URL}htmlreports"
                         ]
                     ]
                 ]
