@@ -119,7 +119,7 @@ pipeline {
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": "*TEST FINISHED*"
+                            "text": "*FINISHED TEST*"
                         ]
                     ],
                     [
@@ -130,7 +130,7 @@ pipeline {
                         "text": [
                             "type": "mrkdwn",
                             "text": "
-                            Job *${env.JOB_NAME}* has been finished.\n\n
+                            Job *${env.JOB_NAME}.toString().toUpperCase()* has been finished.\n\n
                             Test parameters:\n${virtualUsers}\n
                             *More info at:*\n
                             Jira URL: ${params.TEST_URI}\n
