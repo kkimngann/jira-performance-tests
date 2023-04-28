@@ -129,14 +129,7 @@ pipeline {
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": "
-                            Job *${env.JOB_NAME}.toString().toUpperCase()* has been finished.\n\n
-                            Test parameters:\n${virtualUsers}\n
-                            *More info at:*\n
-                            Node's counts: ${nodesCount}\n
-                            Jira URL: ${params.TEST_URI}\n
-                            Build URL: ${env.BUILD_URL}\n
-                            Full reports: ${env.BUILD_URL}jira-performance-reports"
+                            "text": "Job *${env.JOB_NAME}.toString().toUpperCase()* has been finished.\n\nTest parameters:\n${virtualUsers}\n*More info at:*\nNode's counts: ${nodesCount}\nJira URL: ${params.TEST_URI}\nBuild URL: ${env.BUILD_URL}\nFull reports: ${env.BUILD_URL}jira-performance-reports"
                         ]
                     ]
                 ]
