@@ -84,10 +84,10 @@ pipeline {
                     // sh 'mkdir -p .m2 && cp -rT /data ~/.m2 &> /dev/null || true'
                     dir('examples/btf-test') {
                         container('maven') {
-                            sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIME} > result.log || true"
+                            sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIME} || true"
                         }
                         sh 'sed -n \'/actionName/,/View Issue/p\' virtual-users.log > virtual-users.csv'
-                        virtualUsers = sh returnStdout: true, script: 'sed -n \'/Failed tests/,/Tests run/p\' result.log'
+                        virtualUsers = sh returnStdout: true, script: 'sed -n -e \'/Action name/,/View Issue/ p\' virtual-users.log'
                         nodesCount = readFile('nodes.csv')
                     }
 
