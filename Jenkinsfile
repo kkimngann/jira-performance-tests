@@ -119,8 +119,7 @@ pipeline {
                         "type": "header",
                         "text": [
                             "type": "plain_text",
-                            "text": ":smile: FINISHED TEST :smile:",
-                            "emoji": true
+                            "text": "FINISHED TEST",
                         ]
                     ],
                     [
