@@ -1,3 +1,6 @@
+def virtualUsers = ''
+def nodesCount = ''
+
 pipeline {
     agent {
         kubernetes {
@@ -85,8 +88,8 @@ pipeline {
                         }
 
                         sh 'cat virtual-users.log | sed -n \'/actionName/,/View Issue/p\' > virtual-users.csv'
-                        def virtual-users = readFile('virtual-users.csv')
-                        def nodes = readFile('nodes.csv')
+                        virtualUsers = readFile('virtual-users.csv')
+                        nodesCount = readFile('nodes.csv')
                     }
                     sh 'cp -rT ~/.m2 /data &> /dev/null'
                     container('minio-cli') {
@@ -126,7 +129,14 @@ pipeline {
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": "Job *${env.JOB_NAME}* has been finished.\n\nMore info at:\nJira URL: ${params.TEST_URI}\nBuild URL: ${env.BUILD_URL}\nNodes: ${nodes}\nFull reports: ${env.BUILD_URL}jira-performance-reports"
+                            "text": "
+                            Job *${env.JOB_NAME}* has been finished.\n\n
+                            Test parameters:\n${virtualUsers}\n
+                            *More info at:*\n
+                            Jira URL: ${params.TEST_URI}\n
+                            Build URL: ${env.BUILD_URL}\n
+                            Node's counts: ${nodesCount}\n
+                            Full reports: ${env.BUILD_URL}jira-performance-reports"
                         ]
                     ]
                 ]
