@@ -85,6 +85,8 @@ pipeline {
                         }
 
                         sh 'cat virtual-users.log | sed -n \'/actionName/,/View Issue/p\' > virtual-users.csv'
+                        def virtual-users = readFile('virtual-users.csv')
+                        def nodes = readFile('nodes.csv')
                     }
                     sh 'cp -rT ~/.m2 /data &> /dev/null'
                     container('minio-cli') {
@@ -103,7 +105,7 @@ pipeline {
             alwaysLinkToLastBuild: true,
             keepAll: true,
             reportDir: 'examples/btf-test/target/jpt-workspace',
-            reportFiles: '**/*.html*',
+            reportFiles: '**/summary-per-cohort.html, **/mean-latency-chart.html, **/distribution-comparison.html, **/time-series-chart.html',
             reportName: 'jira performance reports',
             reportTitles: '', 
             useWrapperFileDirectly: true])
@@ -124,12 +126,12 @@ pipeline {
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": "Job *${env.JOB_NAME}* has been finished.\n\nMore info at:\n*Build URL:* ${env.BUILD_URL}console\n*Jira performance reports:* ${env.BUILD_URL}jira-performance-reports"
+                            "text": "Job *${env.JOB_NAME}* has been finished.\n\nMore info at:\nJira URL: ${params.TEST_URI}\nBuild URL: ${env.BUILD_URL}\nNodes: ${nodes}\nFull reports: ${env.BUILD_URL}jira-performance-reports"
                         ]
                     ]
                 ]
                 
-                slackSend channel: 'selenium-notifications', blocks: blocks, teamDomain: 'agileops', tokenCredentialId: 'jenkins-slack', botUser: true
+                slackSend channel: 'automation-test-notifications', blocks: blocks, teamDomain: 'agileops', tokenCredentialId: 'jenkins-slack', botUser: true
             }
         }
     }
