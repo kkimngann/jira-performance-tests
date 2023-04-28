@@ -86,11 +86,11 @@ pipeline {
                         container('maven') {
                             sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIME} || true"
                         }
-
                         sh 'cat virtual-users.log | sed -n \'/actionName/,/View Issue/p\' > virtual-users.csv'
                         virtualUsers = readFile('virtual-users.csv')
                         nodesCount = readFile('nodes.csv')
                     }
+
                     sh 'cp -rT ~/.m2 /data &> /dev/null'
                     container('minio-cli') {
                         sh "mc mirror /data minio/jira-performance-test/.m2 --overwrite &> /dev/null"
@@ -133,9 +133,9 @@ pipeline {
                             Job *${env.JOB_NAME}.toString().toUpperCase()* has been finished.\n\n
                             Test parameters:\n${virtualUsers}\n
                             *More info at:*\n
+                            Node's counts: ${nodesCount}\n
                             Jira URL: ${params.TEST_URI}\n
                             Build URL: ${env.BUILD_URL}\n
-                            Node's counts: ${nodesCount}\n
                             Full reports: ${env.BUILD_URL}jira-performance-reports"
                         ]
                     ]
