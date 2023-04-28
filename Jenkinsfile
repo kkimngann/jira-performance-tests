@@ -86,8 +86,8 @@ pipeline {
                         container('maven') {
                             sh "unset MAVEN_CONFIG && ./mvnw verify -DtestURI=${params.TEST_URI} -DadminUsername=${params.ADMIN_USERNAME} -DadminPassword=${params.ADMIN_PASSWORD} -DnumberUsers=${params.NUMBER_USERS} -DdurationMinute=${params.DURATION_TIME} > result.log || true"
                         }
-                        sh 'cat virtual-users.log | sed -n \'/actionName/,/View Issue/p\' > virtual-users.csv'
-                        virtualUsers = sh returnStdout: true, script: 'cat result.log | sed -n \'/Failed tests/,/Tests run/p\''
+                        sh 'sed -n \'/actionName/,/View Issue/p\' virtual-users.log > virtual-users.csv'
+                        virtualUsers = sh returnStdout: true, script: 'sed -n \'/Failed tests/,/Tests run/p\' result.log'
                         nodesCount = readFile('nodes.csv')
                     }
 
@@ -109,7 +109,7 @@ pipeline {
             keepAll: true,
             reportDir: 'examples/btf-test/target/jpt-workspace',
             reportFiles: '**/summary-per-cohort.html, mean-latency-chart.html, **/distribution-comparison.html, **/time-series-chart.html',
-            reportName: 'jira performance reports',
+            reportName: 'jira-performance-reports',
             reportTitles: '', 
             useWrapperFileDirectly: true])
             
@@ -121,16 +121,6 @@ pipeline {
                             "type": "plain_text",
                             "text": ":smile: FINISHED TEST :smile:",
                             "emoji": true
-                    ]
-                    ],
-                    [
-                        "type": "divider"
-                    ],
-                    [
-                        "type": "section",
-                        "text": [
-                            "type": "mrkdwn",
-                            "text": ":tada:Job *${env.JOB_NAME}* has been finished.\n\nTest parameters:\n${virtualUsers}"
                         ]
                     ],
                     [
@@ -140,7 +130,27 @@ pipeline {
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": "*:pushpin:More info at:*\n• *Node's counts:* ${nodesCount}\n• *Jira URL:* ${params.TEST_URI}\n• *Build URL:* ${env.BUILD_URL}\n• *Full reports:* ${env.BUILD_URL}htmlreports"
+                            "text": ":tada:Job *${env.JOB_NAME}* has been finished.\n\nTest parameters:\n"
+                        ]
+                    ],
+                    [
+                        "type": "section",
+                        "text": [
+                            "type": "mrkdwn",
+                            "text": "${virtualUsers}"
+                            "style": [
+                                "code": true
+                            ]
+                        ]
+                    ],
+                    [
+                        "type": "divider"
+                    ],
+                    [
+                        "type": "section",
+                        "text": [
+                            "type": "mrkdwn",
+                            "text": "*:pushpin:More info at:*\n• *Node's counts:* ${nodesCount}\n• *Jira URL:* ${params.TEST_URI}\n• *Build URL:* ${env.BUILD_URL}\n• *Full reports:* ${env.BUILD_URL}jira-performance-reports"
                         ]
                     ]
                 ]

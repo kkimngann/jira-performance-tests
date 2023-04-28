@@ -1,0 +1,47 @@
+2023-04-26T09:22:43,897Z DEBUG {} [] [LoadTest] Dumped node's counts to ./nodes.csv
+2023-04-26T09:22:44,208Z INFO  {} [] [CohortStatsSummary] Performance results summary available at file:/jira-performance-tests/examples/btf-test/target/jpt-workspace/2023-04-26T09-17-10.134617/summary-per-cohort.csv
+2023-04-26T09:22:44,222Z INFO  {} [] [CohortsSummaryTable] Performance results summary available at file:/jira-performance-tests/examples/btf-test/target/jpt-workspace/2023-04-26T09-17-10.134617/summary-per-cohort.html
+2023-04-26T09:22:44,228Z INFO  {} [] [MeanLatencyChart] Mean latency chart is available at file:/jira-performance-tests/examples/btf-test/target/jpt-workspace/2023-04-26T09-17-10.134617/mean-latency-chart.html
+2023-04-26T09:22:44,434Z INFO  {} [] [DistributionComparison] Distribution comparison available at file:///jira-performance-tests/examples/btf-test/target/jpt-workspace/2023-04-26T09-17-10.134617/distribution-comparison.html
+2023-04-26T09:22:44,464Z INFO  {} [] [TimelineChart] Timeline chart available at file:///jira-performance-tests/examples/btf-test/target/jpt-workspace/2023-04-26T09-17-10.134617/my-jira/time-series-chart.html
+2023-04-26T09:22:44,474Z INFO  {} [] [FullReport] Plain text report:
++---------------------------+---------------+----------+----------------------+
+| Action name               | sample size   | errors   | 95th percentile [ms] |
++---------------------------+---------------+----------+----------------------+
+| Add Comment               | 1             | 0        | 1264                 |
+| Browse Boards             | 2             | 0        | 1695                 |
+| Browse Projects           | 7             | 0        | 1069                 |
+| Create Issue              | 6             | 0        | 427                  |
+| Edit Issue                | 7             | 0        | 1490                 |
+| Full Add Comment          | 1             | 1        | 2009                 |
+| Full Create Issue         | 6             | 0        | 3880                 |
+| Full Edit Issue           | 7             | 0        | 3544                 |
+| Log In                    | 1             | 0        | 3451                 |
+| Project Summary           | 5             | 1        | 1115                 |
+| Search with JQL           | 27            | 0        | 2442                 |
+| Switch issue nav view     | 27            | 0        | 259                  |
+| View Backlog              | 8             | 0        | 1796                 |
+| View Board                | 7             | 0        | 2004                 |
+| View Dashboard            | 13            | 0        | 1452                 |
+| View History Tab          | 3             | 0        | 895                  |
+| View Issue                | 79            | 0        | 1528                 |
++---------------------------+---------------+----------+----------------------+
+2023-04-26T09:22:44,474Z INFO  {} [] [FullReport] CSV report:
+actionName,sampleSize,errors,total,p50,p95,p99,max
+Add Comment,1,0,1,1264,1264,1264,1264
+Browse Boards,2,0,2,1166,1695,1695,1695
+Browse Projects,7,0,7,555,1069,1069,1069
+Create Issue,6,0,6,358,427,427,427
+Edit Issue,7,0,7,1348,1490,1490,1490
+Full Add Comment,1,1,2,2009,2009,2009,2009
+Full Create Issue,6,0,6,3704,3880,3880,3880
+Full Edit Issue,7,0,7,2810,3544,3544,3544
+Log In,1,0,1,3451,3451,3451,3451
+Project Summary,5,1,6,965,1115,1115,1115
+Search with JQL,27,0,27,1576,2442,2588,2588
+Switch issue nav view,27,0,27,60,259,273,273
+View Backlog,8,0,8,996,1796,1796,1796
+View Board,7,0,7,1225,2004,2004,2004
+View Dashboard,13,0,13,968,1452,1452,1452
+View History Tab,3,0,3,302,895,895,895
+View Issue,79,0,79,1174,1528,2068,2068
