@@ -129,7 +129,7 @@ pipeline {
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": ":tada: Job *${env.JOB_NAME}* has been finished.\n\nTest parameters:\n"
+                            "text": ":tada: Job *${env.JOB_NAME}* has been finished.\n\nTest parameters:\n• Number of users: ${params.NUMBER_USERS}\n• Duration time: ${params.DURATION_TIME} minutes"
                         ]
                     ],
                     [
