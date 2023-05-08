@@ -129,7 +129,7 @@ pipeline {
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": ":tada:Job *${env.JOB_NAME}* has been finished.\n\nTest parameters:\n"
+                            "text": ":tada: Job *${env.JOB_NAME}* has been finished.\n\nTest parameters:\n"
                         ]
                     ],
                     [
@@ -146,7 +146,7 @@ pipeline {
                         "type": "section",
                         "text": [
                             "type": "mrkdwn",
-                            "text": "*:pushpin:More info at:*\n• *Node's counts:* ${nodesCount}\n• *Jira URL:* ${params.TEST_URI}\n• *Build URL:* ${env.BUILD_URL}\n• *Full reports:* ${env.BUILD_URL}jira-performance-reports"
+                            "text": "*:pushpin: More info at:*\n• *Node's counts:* ${nodesCount}\n• *Jira URL:* ${params.TEST_URI}\n• *Build URL:* ${env.BUILD_URL}\n• *Full reports:* ${env.BUILD_URL}jira-performance-reports"
                         ]
                     ]
                 ]
