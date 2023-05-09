@@ -17,6 +17,10 @@ pipeline {
                   command:
                   - cat
                   tty: true
+                  resources:
+                    requests:
+                      memory: "2048Mi"
+                      cpu: "1000m"
                   volumeMounts:
                   - name: shared-data
                     mountPath: /data
