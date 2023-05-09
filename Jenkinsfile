@@ -60,7 +60,7 @@ pipeline {
                     properties([
                         parameters([
                             text(
-                                defaultValue: 'https://jira-9.aandd.io',
+                                defaultValue: 'https://jira-9.agileops.dev',
                                 name: 'TEST_URI'
                             ),
                             text(
