@@ -21,6 +21,9 @@ pipeline {
                     requests:
                       memory: "2048Mi"
                       cpu: "1000m"
+                    limits:
+                      memory: "4096Mi"
+                      cpu: "2000m"
                   volumeMounts:
                   - name: shared-data
                     mountPath: /data
